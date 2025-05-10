@@ -7,6 +7,9 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
+
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
@@ -78,6 +81,40 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/image_statistic" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:layout_marginBottom="15dp"
+        android:background="@android:color/transparent"
+        android:onClick="on_button_click"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toTopOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/image_plus" />
+
+    <TextView
+        android:id="@+id/fraze_text"
+        android:layout_width="321dp"
+        android:layout_height="21dp"
+        android:text="@string/start_fraze"
+        android:textColor="@color/main_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="169dp" />
+
+    <TextView
+        android:id="@+id/fraze_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/start_fraze_name"
+        android:textColor="@color/fraze_grew"
+        app:layout_constraintEnd_toEndOf="@+id/fraze_text"
+        app:layout_constraintTop_toBottomOf="@+id/fraze_text" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

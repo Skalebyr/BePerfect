@@ -2,4 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="fraze_grew">#9E9E9E</color>
+    <color name="main_text">#E0E0E0</color>
+    <color name="background">#121212</color>
+    <color name="window">#FF121212</color>
 </resources>
