@@ -23,7 +23,7 @@
         android:textColorHint="#AAAAAA" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/textHowLong"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -58,12 +58,21 @@
     </LinearLayout>
 
 
+    <TextView
+        android:id="@+id/textAgain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:text="повторения"
+        android:textColor="@color/fraze_grew"
+        android:textColorHint="@color/main_text" />
+
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/chip_group_choice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -99,10 +108,61 @@
             android:text="еженедельно" />
     </com.google.android.material.chip.ChipGroup>
 
+    <TextView
+        android:id="@+id/textPomidoro"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:text="Pomidoro"
+        android:textColor="@color/fraze_grew"
+        android:textColorHint="@color/main_text" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_group_choice_pomidoro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:singleSelection="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/pomidoro_chip1"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="учёба" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/pomidoro_chip2"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="работа" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/pomidoro_chip3"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="прочее" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/pomidoro_chip4"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="нет" />
+    </com.google.android.material.chip.ChipGroup>
+
     <Button
         android:id="@+id/btn_save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:layout_weight="1"
         android:text="Создать задачу"
         android:textColor="#BB86FC" />
