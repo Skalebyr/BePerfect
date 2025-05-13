@@ -1,170 +1,226 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/gradient_background"
-    android:orientation="vertical"
-    android:padding="16dp"
-    tools:ignore="ExtraText">
-
-    <!-- Поле ввода -->
-
-    <EditText
-        android:id="@+id/et_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Новая задача"
-        android:imeOptions="actionDone"
-        android:inputType="text"
-        android:maxLines="1"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#AAAAAA" />
-
-    <TextView
-        android:id="@+id/textHowLong"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="как долго?"
-        android:textColor="@color/fraze_grew"
-        android:textColorHint="@color/main_text" />
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:scrollbars="vertical">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:background="@color/black_secondary"
+        android:padding="16dp">
 
-        <NumberPicker
-            android:id="@+id/hour_picker"
-            android:layout_width="64dp"
-            android:layout_height="wrap_content" />
+        <!-- Поле ввода задачи -->
+        <EditText
+            android:id="@+id/et_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Новая задача"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#AAAAAA" />
+
+        <!-- Заголовок "Как долго?" -->
+        <TextView
+            android:id="@+id/text_How_Long"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="как долго?"
+            android:textColor="@color/fraze_grew"
+            android:textColorHint="@color/main_text" />
+
+        <!-- Выбор времени -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rounded_background"
+            android:orientation="horizontal">
+
+            <NumberPicker
+                android:id="@+id/hour_picker"
+                android:layout_width="64dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="4dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text=":"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp" />
+
+            <NumberPicker
+                android:id="@+id/minute_picker"
+                android:layout_width="64dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="4dp"/>
+        </LinearLayout>
+
+        <!-- Заголовок "Повторения" -->
+        <TextView
+            android:id="@+id/text_Again"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="повторения"
+            android:textColor="@color/fraze_grew"
+            android:textColorHint="@color/main_text" />
+
+        <!-- Чипы повторений -->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_choice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rounded_background"
+            app:singleSelection="true"
+            app:singleLine="false">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip1"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="без повторений" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip2"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="каждый день" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip3"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="через день" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip4"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="еженедельно" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Заголовок "Pomidoro" -->
+        <TextView
+            android:id="@+id/text_Pomidoro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Pomidoro"
+            android:textColor="@color/fraze_grew"
+            android:textColorHint="@color/main_text" />
+
+        <!-- Чипы Pomidoro -->
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_choice_pomidoro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_background"
+            android:layout_marginTop="8dp"
+            app:singleSelection="true"
+            app:singleLine="false">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/pomidoro_chip1"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="учёба" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/pomidoro_chip2"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="работа" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/pomidoro_chip3"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="прочее" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/pomidoro_chip4"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="нет" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Кнопка сохранения -->
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/text_Signals"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text=":"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp" />
+            android:layout_marginTop="16dp"
+            android:text="Сигналы"
+            android:textColor="@color/fraze_grew"
+            android:textColorHint="@color/main_text" />
 
-        <NumberPicker
-            android:id="@+id/minute_picker"
-            android:layout_width="64dp"
-            android:layout_height="wrap_content" />
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Звук pomidoro"
+            android:textColor="@color/fraze_grew"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/button_secondary_dark"
+            android:textSize="16dp"
+            android:layout_gravity="center"
+/>
+
+        <Switch
+            android:id="@+id/switch2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Оповещение pomidoro"
+            android:textColor="@color/fraze_grew"
+            android:layout_marginTop="8dp"
+            android:textSize="16dp" />
+
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/button_primary_dark"
+            android:text="Создать задачу"
+            android:textColor="#BB86FC"
+            android:textSize="16sp" />
+
     </LinearLayout>
-
-
-    <TextView
-        android:id="@+id/textAgain"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="16dp"
-        android:text="повторения"
-        android:textColor="@color/fraze_grew"
-        android:textColorHint="@color/main_text" />
-
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chip_group_choice"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:singleSelection="true">
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip1"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="без повторений" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip2"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="каждый день" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip3"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="через день" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip4"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="еженедельно" />
-    </com.google.android.material.chip.ChipGroup>
-
-    <TextView
-        android:id="@+id/textPomidoro"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="16dp"
-        android:text="Pomidoro"
-        android:textColor="@color/fraze_grew"
-        android:textColorHint="@color/main_text" />
-
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chip_group_choice_pomidoro"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:singleSelection="true">
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/pomidoro_chip1"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="учёба" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/pomidoro_chip2"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="работа" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/pomidoro_chip3"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="прочее" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/pomidoro_chip4"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="нет" />
-    </com.google.android.material.chip.ChipGroup>
-
-    <Button
-        android:id="@+id/btn_save"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_weight="1"
-        android:text="Создать задачу"
-        android:textColor="#BB86FC" />
-
-</LinearLayout>
+</ScrollView>

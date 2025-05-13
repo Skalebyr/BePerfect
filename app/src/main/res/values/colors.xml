@@ -6,4 +6,36 @@
     <color name="main_text">#E0E0E0</color>
     <color name="background">#121212</color>
     <color name="window">#FF121212</color>
+
+    <!-- тестоввя тема для цветов-->
+    <!-- Основные поверхности -->
+    <color name="black_primary">#121212</color>       <!-- Основной фон -->
+    <color name="black_secondary">#1A1A1A</color>    <!-- Карточки/диалоги -->
+    <color name="black_tertiary">#242424</color>      <!-- Активные элементы -->
+
+    <!-- Текст -->
+    <color name="text_primary_dark">#F5F5F5</color>   <!-- Основной текст (96% белого) -->
+    <color name="text_secondary_dark">#B3B3B3</color> <!-- Второстепенный (70%) -->
+    <color name="text_hint_dark">#666666</color>      <!-- Неактивный (40%) -->
+
+    <!-- Акценты (глубокие jewel-тона) -->
+    <color name="accent_amethyst">#6A3098</color>     <!-- Основной акцент (тёмно-фиолетовый) -->
+    <color name="accent_deep_teal">#00695C</color>    <!-- Доп. акцент (тёмный бирюзовый) -->
+    <color name="soft_pink_beige">#FFD3C9</color>
+    <color name="pink_beige_muted">#E8BEB1</color>
+
+    <!-- Кнопки -->
+    <color name="button_primary_dark">#6A3098</color>       <!-- Основная (фиолет) -->
+    <color name="button_primary_text_dark">#FFFFFF</color>  <!-- Текст -->
+    <color name="button_secondary_dark">#333333</color>     <!-- Второстепенная -->
+    <color name="button_secondary_text_dark">#B3B3B3</color>
+
+    <!-- Системные -->
+    <color name="error_dark">#8B0000</color>          <!-- Тёмно-бордовый -->
+    <color name="success_dark">#2E7D32</color>        <!-- Тёмно-зелёный -->
+    <color name="warning_dark">#FF8F00</color>        <!-- Тёмный янтарный -->
+
+    <!-- Дополнительно -->
+    <color name="divider_dark">#1E1E1E</color>       <!-- Разделители -->
+    <color name="ripple_dark">#2E2E2E</color>        <!-- Эффект нажатия -->
 </resources>
