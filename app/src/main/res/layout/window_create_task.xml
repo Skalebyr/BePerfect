@@ -14,7 +14,7 @@
         android:background="@color/black_secondary"
         android:padding="16dp">
 
-        <!-- Поле ввода задачи -->
+
         <EditText
             android:id="@+id/et_input"
             android:layout_width="match_parent"
@@ -26,7 +26,7 @@
             android:textColor="#FFFFFF"
             android:textColorHint="#AAAAAA" />
 
-        <!-- Заголовок "Как долго?" -->
+
         <TextView
             android:id="@+id/text_How_Long"
             android:layout_width="match_parent"
@@ -36,7 +36,7 @@
             android:textColor="@color/fraze_grew"
             android:textColorHint="@color/main_text" />
 
-        <!-- Выбор времени -->
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,11 +45,15 @@
             android:background="@drawable/rounded_background"
             android:orientation="horizontal">
 
+
             <NumberPicker
                 android:id="@+id/hour_picker"
+                android:theme="@style/NumberPickerTheme"
                 android:layout_width="64dp"
                 android:layout_height="100dp"
-                android:layout_marginEnd="4dp"/>
+                android:layout_marginEnd="4dp"
+                android:background="@android:color/transparent" />
+
 
             <TextView
                 android:layout_width="wrap_content"
@@ -59,14 +63,17 @@
                 android:textColor="#FFFFFF"
                 android:textSize="24sp" />
 
+
             <NumberPicker
                 android:id="@+id/minute_picker"
+                android:theme="@style/NumberPickerTheme"
                 android:layout_width="64dp"
                 android:layout_height="100dp"
-                android:layout_marginStart="4dp"/>
+                android:layout_marginEnd="4dp"
+                android:background="@android:color/transparent" />
         </LinearLayout>
 
-        <!-- Заголовок "Повторения" -->
+
         <TextView
             android:id="@+id/text_Again"
             android:layout_width="match_parent"
@@ -76,7 +83,7 @@
             android:textColor="@color/fraze_grew"
             android:textColorHint="@color/main_text" />
 
-        <!-- Чипы повторений -->
+
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chip_group_choice"
             android:layout_width="match_parent"
@@ -122,7 +129,7 @@
                 android:text="еженедельно" />
         </com.google.android.material.chip.ChipGroup>
 
-        <!-- Заголовок "Pomidoro" -->
+
         <TextView
             android:id="@+id/text_Pomidoro"
             android:layout_width="match_parent"
@@ -132,7 +139,6 @@
             android:textColor="@color/fraze_grew"
             android:textColorHint="@color/main_text" />
 
-        <!-- Чипы Pomidoro -->
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chip_group_choice_pomidoro"
@@ -179,7 +185,7 @@
                 android:text="нет" />
         </com.google.android.material.chip.ChipGroup>
 
-        <!-- Кнопка сохранения -->
+
 
         <TextView
             android:id="@+id/text_Signals"
@@ -197,7 +203,6 @@
             android:text="Звук pomidoro"
             android:textColor="@color/fraze_grew"
             android:layout_marginTop="8dp"
-            android:backgroundTint="@color/button_secondary_dark"
             android:textSize="16dp"
             android:layout_gravity="center"
 />

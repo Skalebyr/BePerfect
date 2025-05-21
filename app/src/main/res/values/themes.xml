@@ -18,6 +18,18 @@
         <item name="android:windowExitAnimation">@anim/slide_down</item>
     </style>
 
+    <!-- Если используете Material Components -->
+    <style name="NumberPickerTheme" parent="ThemeOverlay.MaterialComponents.Light">
+        <!-- Цвет текста -->
+        <item name="android:textColorPrimary">@color/white</item>
+        <!-- Цвет разделителей (линий между числами) -->
+        <item name="colorControlNormal">@color/black</item>
+        <!-- Цвет выделенного (текущего) элемента -->
+        <item name="colorControlActivated">@color/white</item>
+        <!-- Фон (если нужно) -->
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
 
 
 </resources>
