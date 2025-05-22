@@ -119,7 +119,7 @@
         android:layout_marginBottom="-36dp"
         android:background="@android:color/transparent"
         android:elevation="12dp"
-        android:onClick="on_button_click"
+        android:onClick="onButtonClick"
         android:scaleType="centerInside"
         app:srcCompat="@drawable/image_plus" />
 

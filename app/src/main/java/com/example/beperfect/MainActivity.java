@@ -1,303 +1,320 @@
 package com.example.beperfect;
 
 import android.app.Dialog;
-import android.content.res.ColorStateList;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.Switch;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
-
-    private Switch switchSound;
-    private Switch switchNotification;
+    private List<TaskData> taskList = new ArrayList<>();
+    private BroadcastReceiver midnightReceiver;
+    private Switch switchSound, switchNotification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        setupUI();
+        setupMidnightResetReceiver();
+        loadSavedTasks();
     }
 
-// ============================================================================================ //
+    // ======================================== //
     //
-    // ОСНОВНЫЕ МЕТОДЫ ОКНА
+    // Инициализация интерфейса
     //
-// ============================================================================================ //
+    // ======================================== //
 
-    // для OnClick
-    public void on_button_click(View view) {
+    private void setupUI() {
+    }
+
+    public void onButtonClick(View view) {
         showTaskCreationDialog("Новая задача");
     }
 
-    // создание, показа диалога
-    private void showTaskCreationDialog(String text) {
-        Dialog dialog = create_base_dialog();
-        setup_dialog_content(dialog, text);
-        dialog.show();
-    }
-
-    //базовый диалог, настройки анимации, размера
-    private Dialog create_base_dialog() {
-        Dialog dialog = new Dialog(this);
+    private void showTaskCreationDialog(String title) {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.window_create_task);
 
         Window window = dialog.getWindow();
         if (window != null) {
-            window.setWindowAnimations(R.style.DialogAnimation);
-            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            WindowManager.LayoutParams params = window.getAttributes();
+            params.width = WindowManager.LayoutParams.MATCH_PARENT;
+            params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            window.setAttributes(params);
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
-        return dialog;
-    }
 
-    //Настраивает содержимое диалога
-    private void setup_dialog_content(Dialog dialog, String initialText) {
-        // обозначение
         EditText etInput = dialog.findViewById(R.id.et_input);
         NumberPicker hourPicker = dialog.findViewById(R.id.hour_picker);
         NumberPicker minutePicker = dialog.findViewById(R.id.minute_picker);
-        Button btnSave = dialog.findViewById(R.id.btn_save);
-
-        // Чипы повторений
         ChipGroup repeatChipGroup = dialog.findViewById(R.id.chip_group_choice);
-        // Чипы Pomodoro
         ChipGroup pomodoroChipGroup = dialog.findViewById(R.id.chip_group_choice_pomidoro);
-
-        // Инициализация Switch
+        Button btnSave = dialog.findViewById(R.id.btn_save);
         switchSound = dialog.findViewById(R.id.switch1);
         switchNotification = dialog.findViewById(R.id.switch2);
 
-        // Настройка фигни
-        setup_number_pickers(hourPicker, minutePicker);
-
-        // Настройка чипов
-        setup_repeat_chips(repeatChipGroup, dialog);
-        setup_pomidoro_chips(pomodoroChipGroup, dialog);
-
-        // Настройка Switch
-        setup_switch();
-
-        // Настройка кнопки сохранения
-        setup_save_button(btnSave, etInput, hourPicker, minutePicker,
-                dialog, repeatChipGroup, pomodoroChipGroup);
-    }
-
-    //настройка выбора времени
-    private void setup_number_pickers(NumberPicker hourPicker, NumberPicker minutePicker) {
-        // Часы (0-23)
         hourPicker.setMinValue(0);
         hourPicker.setMaxValue(23);
-        hourPicker.setValue(12); // По умолчанию 12:00
-        hourPicker.setFormatter(value -> String.format("%02d", value));
-
-        // Минуты (0-59)
         minutePicker.setMinValue(0);
         minutePicker.setMaxValue(59);
-        minutePicker.setValue(0);
-        minutePicker.setFormatter(value -> String.format("%02d", value));
-    }
 
-    //Настраиваем чипы повторений
-    private void setup_repeat_chips(ChipGroup repeatChipGroup, Dialog dialog) {
-        repeatChipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
-            if (!checkedIds.isEmpty()) {
-                Chip selectedChip = dialog.findViewById(checkedIds.get(0));
-                selectedChip.setTag(selectedChip.getText());
-            }
-        });
-        repeatChipGroup.check(R.id.chip1); // по умолчанию
-    }
+        repeatChipGroup.check(R.id.chip1);
+        pomodoroChipGroup.check(R.id.pomidoro_chip1);
 
-    //Настраиваем чипы Pomodoro
-    private void setup_pomidoro_chips(ChipGroup pomodoroChipGroup, Dialog dialog) {
-        pomodoroChipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
-            if (!checkedIds.isEmpty()) {
-                Chip selectedChip = dialog.findViewById(checkedIds.get(0));
-                String selectedType = selectedChip.getText().toString();
-
-                // Динамически меняем подсказку в EditText
-                EditText etInput = dialog.findViewById(R.id.et_input);
-                switch (selectedType) {
-                    case "учёба":
-                        etInput.setHint("Тема занятия");
-                        break;
-                    case "работа":
-                        etInput.setHint("Проект/задача");
-                    default:
-                        etInput.setHint("Новая задача");
-                }
-            }
-        });
-    }
-
-// ============================================================================================ //
-    //
-    // МЕТОДЫ ДЛЯ РАБОТЫ SWITCH ПЕРЕКЛЮЧАТЕЛЕЙ
-    //
-// ============================================================================================ //
-
-    private void setup_switch() {
-        if (switchSound != null && switchNotification != null) {
-            configure_switch(switchSound, "Звук pomidoro");
-            configure_switch(switchNotification, "Оповещение pomidoro");
-        }
-    }
-
-    // Метод для настройки отдельного Switch
-    private void configure_switch(Switch switchView, String switchName) {
-        // устанавливаем начальные цвета
-        update_switch(switchView, switchView.isChecked());
-
-        // обработчик изменений
-        switchView.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            update_switch(switchView, isChecked);
-        });
-    }
-
-    // Метод для обновления внешнего вида Switch
-    private void update_switch(Switch switchView, boolean isChecked) {
-        int trackColor = isChecked ? R.color.soft_pink_beige : R.color.fraze_grew;
-        int thumbColor = isChecked ? R.color.white : R.color.text_secondary_dark;
-
-        switchView.getTrackDrawable().setTintList(
-                ColorStateList.valueOf(ContextCompat.getColor(this, trackColor))
-        );
-        switchView.getThumbDrawable().setTintList(
-                ColorStateList.valueOf(ContextCompat.getColor(this, thumbColor))
-        );
-    }
-
-// ============================================================================================ //
-    //
-    // МЕТОДЫ ДЛЯ РАБОТЫ С СОХРАНЕНИЕМ ЗАДАЧИ
-    //
-// ============================================================================================ //
-
-    // Настраивает кнопкц сохранения задачи
-    private void setup_save_button(Button btnSave, EditText etInput,
-                                   NumberPicker hourPicker, NumberPicker minutePicker,
-                                   Dialog dialog, ChipGroup repeatChipGroup,
-                                   ChipGroup pomodoroChipGroup) {
         btnSave.setOnClickListener(v -> {
-            if (valide_input_task(etInput)) {
-                save_to_data(
-                        etInput.getText().toString().trim(),
-                        hourPicker.getValue(),
-                        minutePicker.getValue(),
-                        get_select_chip_text(repeatChipGroup, dialog),
-                        get_select_chip_text(pomodoroChipGroup, dialog)
-                );
+            String taskName = etInput.getText().toString().trim();
+            if (!taskName.isEmpty()) {
+                createTaskFromInput(etInput, hourPicker, minutePicker, repeatChipGroup, pomodoroChipGroup);
                 dialog.dismiss();
+            } else {
+                Toast.makeText(this, "Введите название задачи", Toast.LENGTH_SHORT).show();
             }
         });
+
+        dialog.show();
     }
 
+    // ======================================== //
+    //
+    // Обработка задач
+    //
+    // ======================================== //
 
-    // проверка на аутизм
-    private boolean valide_input_task(EditText etInput) {
-        if (etInput.getText().toString().trim().isEmpty()) {
-            etInput.setError("Введите текст задачи");
-            return false;
+    private void createTaskFromInput(EditText etInput, NumberPicker hourPicker,
+                                     NumberPicker minutePicker, ChipGroup repeatChipGroup,
+                                     ChipGroup pomodoroChipGroup) {
+        String taskName = etInput.getText().toString().trim();
+        int totalMinutes = hourPicker.getValue() * 60 + minutePicker.getValue();
+        String repeatType = getSelectedChipText(repeatChipGroup);
+        String pomodoroType = getSelectedChipText(pomodoroChipGroup);
+
+        repeatType = convertRepeatType(repeatType);
+        pomodoroType = convertPomodoroType(pomodoroType);
+
+        int[] pomodoroParams = getPomodoroParams(pomodoroType, totalMinutes);
+
+        createNewTask(taskName, pomodoroParams[0], pomodoroParams[1], pomodoroParams[2],
+                pomodoroParams[3], switchSound.isChecked(),
+                switchNotification.isChecked(), repeatType);
+    }
+
+    private void createNewTask(String taskName, int workDuration, int breakDuration,
+                               int longBreakDuration, int pomodoroCount,
+                               boolean soundEnabled, boolean notificationEnabled,
+                               String repeatType) {
+        try {
+            TaskData newTask = new TaskData(taskName, workDuration, breakDuration,
+                    longBreakDuration, pomodoroCount,
+                    soundEnabled, notificationEnabled,
+                    repeatType);
+            taskList.add(newTask);
+            addTaskToView(newTask);
+            saveTasks();
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error creating new task", e);
         }
-        return true;
     }
 
-    //получаем текст выбранного чипа
-    private String get_select_chip_text(ChipGroup chipGroup, Dialog dialog) {
+    private void addTaskToView(TaskData task) {
+        LinearLayout container = findViewById(R.id.pomodoro_container);
+        PomodoroTaskView pomodoroView = new PomodoroTaskView(this);
+
+        pomodoroView.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        pomodoroView.setSoundEnabled(task.isSoundEnabled());
+        pomodoroView.setNotificationEnabled(task.isNotificationEnabled());
+        pomodoroView.setup_task(task.getTaskName(),
+                task.getWorkDuration(),
+                task.getBreakDuration(),
+                task.getLongBreakDuration(),
+                task.getPomodoroCount());
+
+        container.addView(pomodoroView);
+    }
+
+    // ======================================== //
+    //
+    // Обработка повторений
+    //
+    // ======================================== //
+
+    private String getSelectedChipText(ChipGroup chipGroup) {
         int selectedId = chipGroup.getCheckedChipId();
-        Chip selectedChip = dialog.findViewById(selectedId);
-        return selectedChip != null ? selectedChip.getText().toString() : "";
+        if (selectedId != View.NO_ID) {
+            Chip chip = chipGroup.findViewById(selectedId);
+            return chip.getText().toString();
+        }
+        return "";
     }
 
-    // сейвим данные задачи
-    private void save_to_data(String taskText, int hours, int minutes,
-                              String repeatType, String pomodoroType) {
-        // Конвертируем часы и минуты в минуты
-        int totalMinutes = hours * 60 + minutes;
-        int pomodoroCount;
-        int workDuration;
-        int breakDuration;
-        int longBreakDuration;
+    private String convertRepeatType(String uiText) {
+        switch (uiText) {
+            case "без повторений": return "нет";
+            case "каждый день": return "каждый день";
+            case "через день": return "через день";
+            case "еженедельно": return "раз в неделю";
+            default: return "нет";
+        }
+    }
 
-        // Устанавливаем временные интервалы в зависимости от типа задачи
+    private String convertPomodoroType(String uiText) {
+        switch (uiText) {
+            case "учёба": return "учёба";
+            case "работа": return "работа";
+            case "прочее": return "прочее";
+            case "нет": return "нет";
+            default: return "учёба";
+        }
+    }
+
+    private int[] getPomodoroParams(String pomodoroType, int totalMinutes) {
         switch (pomodoroType) {
             case "учёба":
-                workDuration = 25;
-                breakDuration = 5;
-                longBreakDuration = 10;
-                break;
+                return new int[]{25, 5, 10, Math.max(1, totalMinutes / 25)};
             case "работа":
-                workDuration = 45;
-                breakDuration = 10;
-                longBreakDuration = 17;
-                break;
+                return new int[]{45, 10, 17, Math.max(1, totalMinutes / 45)};
             case "прочее":
-                workDuration = 30;
-                breakDuration = 8;
-                longBreakDuration = 14;
-                break;
+                return new int[]{30, 8, 14, Math.max(1, totalMinutes / 30)};
             case "нет":
-                // Для типа "нет" создаем одну длинную задачу без перерывов
-                createPomodoroTimer(taskText, totalMinutes, 0, 0, 1,
-                        switchSound.isChecked(), switchNotification.isChecked());
-                return;
+                return new int[]{totalMinutes, 0, 0, 1};
             default:
-                workDuration = 25;
-                breakDuration = 5;
-                longBreakDuration = 10;
+                return new int[]{25, 5, 10, Math.max(1, totalMinutes / 25)};
         }
-
-        pomodoroCount = Math.max(1, totalMinutes / workDuration);
-        createPomodoroTimer(taskText, workDuration, breakDuration, longBreakDuration,
-                pomodoroCount, switchSound.isChecked(), switchNotification.isChecked());
     }
 
-    private int calculate_pomodoro_count(int totalMinutes, String pomodoroType) {
-        // Базовая логика: 1 Pomodoro = 25 мин работы + 5 мин отдыха
-        return (pomodoroType.equals("нет")) ? 0 : Math.max(1, totalMinutes / 25);
+    // ======================================== //
+    //
+    // Обработка времени и сохранения
+    //
+    // ======================================== //
+
+    private void setupMidnightResetReceiver() {
+        IntentFilter filter = new IntentFilter(Intent.ACTION_TIME_TICK);
+        midnightReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                checkForMidnightReset();
+            }
+        };
+        registerReceiver(midnightReceiver, filter);
     }
 
-    private void createPomodoroTimer(String taskName, int workDuration, int breakDuration,
-                                     int longBreakDuration, int pomodoroCount,
-                                     boolean isSoundEnabled, boolean isNotificationEnabled) {
-        LinearLayout container = findViewById(R.id.pomodoro_container);
-        if (container == null) return;
+    private void checkForMidnightReset() {
+        Calendar now = Calendar.getInstance();
+        if (now.get(Calendar.HOUR_OF_DAY) == 0 && now.get(Calendar.MINUTE) == 0) {
+            resetDailyTasks();
+        }
+    }
 
-        PomodoroTaskView pomodoroView = new PomodoroTaskView(this);
-        pomodoroView.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
+    private void resetDailyTasks() {
+        runOnUiThread(() -> {
+            LinearLayout container = findViewById(R.id.pomodoro_container);
+            container.removeAllViews();
 
-        pomodoroView.setSoundEnabled(isSoundEnabled);
-        pomodoroView.setNotificationEnabled(isNotificationEnabled);
-        pomodoroView.setup_task(taskName, workDuration, breakDuration, longBreakDuration, pomodoroCount);
-        container.addView(pomodoroView);
+            for (TaskData task : taskList) {
+                if (shouldResetTask(task)) {
+                    task.setLastResetDate(System.currentTimeMillis());
+                    addTaskToView(task);
+                } else {
+                    taskList.remove(task);
+                }
+            }
 
-        // ===========================================
-        // СОХРАНЕНИЕ В БД
-        // ===========================================
+            saveTasks();
+        });
+    }
+
+    private boolean shouldResetTask(TaskData task) {
+        Calendar now = Calendar.getInstance();
+        switch (task.getRepeatType()) {
+            case "каждый день":
+                return true;
+            case "через день":
+                return daysSinceLastReset(task) >= 2;
+            case "раз в неделю":
+                return weeksSinceLastReset(task) >= 1;
+            default:
+                return false;
+        }
+    }
+
+    private long daysSinceLastReset(TaskData task) {
+        long diff = System.currentTimeMillis() - task.getLastResetDate();
+        return TimeUnit.MILLISECONDS.toDays(diff);
+    }
+
+    private long weeksSinceLastReset(TaskData task) {
+        long diff = System.currentTimeMillis() - task.getLastResetDate();
+        return TimeUnit.MILLISECONDS.toDays(diff) / 7;
+    }
+
+    private void saveTasks() {
+        SharedPreferences prefs = getSharedPreferences("TasksPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(taskList);
+        editor.putString("tasks", json);
+        editor.apply();
+    }
+
+    private void loadSavedTasks() {
+        SharedPreferences prefs = getSharedPreferences("TasksPrefs", MODE_PRIVATE);
+        String json = prefs.getString("tasks", null);
+
+        if (json != null) {
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<TaskData>>(){}.getType();
+            taskList = gson.fromJson(json, type);
+
+            for (TaskData task : taskList) {
+                if (shouldResetTask(task)) {
+                    task.setLastResetDate(System.currentTimeMillis());
+                }
+                addTaskToView(task);
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (midnightReceiver != null) {
+            unregisterReceiver(midnightReceiver);
+        }
     }
 }

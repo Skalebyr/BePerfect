@@ -138,21 +138,21 @@ public class PomodoroTaskView extends LinearLayout {
     public void setup_task(String taskName, int workDurationMin, int breakDurationMin,
                            int longBreakDurationMin, int pomodoroCount) {
         try {
-            // 1. Сброс состояния таймера
+
             reset_state();
 
-            // 2. Установка параметров задачи
+
             this.taskName = taskName;
             this.workDurationMs = workDurationMin * 60 * 1000;
             this.breakDurationMs = breakDurationMin * 60 * 1000;
             this.longBreakDurationMs = longBreakDurationMin * 60 * 1000;
             this.pomodoroCount = pomodoroCount;
 
-            // 3. Обновление UI
+
             taskTitle.setText(taskName);
             pomodoroContainer.removeAllViews();
 
-            // 4. Скрытие цитаты (главное изменение)
+
             if (getContext() instanceof Activity) {
                 Activity activity = (Activity) getContext();
                 LinearLayout quoteContainer = activity.findViewById(R.id.quote_container);
@@ -161,7 +161,7 @@ public class PomodoroTaskView extends LinearLayout {
                 }
             }
 
-            // 5. Создание блоков помидоров
+
             for (int i = 0; i < pomodoroCount; i++) {
                 add_pomodoro_block(true, false);
                 if (i < pomodoroCount - 1) {
@@ -169,14 +169,14 @@ public class PomodoroTaskView extends LinearLayout {
                 }
             }
 
-            // 6. Настройка таймера для первого блока
+
             if (pomodoroCount > 0) {
                 setup_timer_controls_for_first_Block();
             }
 
         } catch (Exception e) {
             Log.e("PomodoroTaskView", "Error in setup_task: " + e.getMessage(), e);
-            // Можно добавить Toast или другой способ показа ошибки
+
             if (getContext() != null) {
                 Toast.makeText(getContext(), "Ошибка создания задачи: " + e.getMessage(),
                         Toast.LENGTH_LONG).show();
@@ -518,7 +518,7 @@ public class PomodoroTaskView extends LinearLayout {
             show_confetti_animation(block, isWorkPhase);
         }
 
-        // Для типа "нет" просто завершаем задачу
+
         if (pomodoroCount == 1 && workDurationMs > 0 && breakDurationMs == 0) {
             currentPomodoroIndex++;
             return;
