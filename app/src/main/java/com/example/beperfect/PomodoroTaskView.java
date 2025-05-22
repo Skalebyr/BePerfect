@@ -4,6 +4,8 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 
 import android.graphics.Canvas;
@@ -36,6 +38,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import android.os.Build;
 import android.widget.Toast;
@@ -54,6 +58,7 @@ public class PomodoroTaskView extends LinearLayout {
     private ArrayList<PointF> particles = new ArrayList<>();
     private ValueAnimator confettiAnimator;
     private boolean isConfettiRunning = false;
+    private boolean isNotificationEnabled = true;
 
 
     private LinearLayout pomodoroContainer;
@@ -61,6 +66,7 @@ public class PomodoroTaskView extends LinearLayout {
     private TextView timerText;
     private ProgressBar timerProgress;
     private Button controlButton;
+    private boolean isSoundEnabled = true;
 
 
     private CountDownTimer currentTimer;
@@ -121,6 +127,13 @@ public class PomodoroTaskView extends LinearLayout {
 //
 // =================================================//
 
+    public void setNotificationEnabled(boolean enabled) {
+        this.isNotificationEnabled = enabled;
+    }
+
+    public void setSoundEnabled(boolean enabled) {
+        this.isSoundEnabled = enabled;
+    }
 
     public void setup_task(String taskName, int workDurationMin, int breakDurationMin,
                            int longBreakDurationMin, int pomodoroCount) {
@@ -384,6 +397,11 @@ public class PomodoroTaskView extends LinearLayout {
 
     private void show_timer_complete_dialog() {
         play_alarm_sound();
+
+        if (isNotificationEnabled) {
+            showNotification();
+        }
+
         final Dialog dialog = new Dialog(getContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_timer_complete);
@@ -402,8 +420,43 @@ public class PomodoroTaskView extends LinearLayout {
         dialog.show();
     }
 
+    private void showNotification() {
+        Context context = getContext();
+        if (context == null) return;
+
+        String channelId = "pomodoro_channel";
+        String channelName = "Pomodoro Notifications";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    channelId,
+                    channelName,
+                    NotificationManager.IMPORTANCE_HIGH);
+            NotificationManager manager = context.getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle("Pomodoro Timer")
+                .setContentText("Таймер вышел!")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        try {
+            notificationManager.notify(1, builder.build());
+        } catch (SecurityException e) {
+            Log.e("Pomodoro", "Ошибка показа уведомления", e);
+        }
+    }
+
 
     private void play_alarm_sound() {
+        if (!isSoundEnabled) return;
+
         try {
             if (mediaPlayer != null) {
                 mediaPlayer.release();
@@ -427,6 +480,8 @@ public class PomodoroTaskView extends LinearLayout {
     }
 
     private void stop_alarm_sound() {
+        if (!isSoundEnabled) return;
+
         if (mediaPlayer != null) {
             try {
                 mediaPlayer.stop();
@@ -461,6 +516,12 @@ public class PomodoroTaskView extends LinearLayout {
                     ContextCompat.getColor(getContext(), R.color.blue);
             animate_block_color(block, targetColor);
             show_confetti_animation(block, isWorkPhase);
+        }
+
+        // Для типа "нет" просто завершаем задачу
+        if (pomodoroCount == 1 && workDurationMs > 0 && breakDurationMs == 0) {
+            currentPomodoroIndex++;
+            return;
         }
 
         if (isWorkPhase) {

@@ -214,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
     // проверка на аутизм
     private boolean valide_input_task(EditText etInput) {
         if (etInput.getText().toString().trim().isEmpty()) {
@@ -233,12 +234,44 @@ public class MainActivity extends AppCompatActivity {
     // сейвим данные задачи
     private void save_to_data(String taskText, int hours, int minutes,
                               String repeatType, String pomodoroType) {
-        // Конвертируем часы и минуты в минуты для Pomodoro
+        // Конвертируем часы и минуты в минуты
         int totalMinutes = hours * 60 + minutes;
-        int pomodoroCount = calculate_pomodoro_count(totalMinutes, pomodoroType);
+        int pomodoroCount;
+        int workDuration;
+        int breakDuration;
+        int longBreakDuration;
 
-        // Создаем таймер
-        createPomodoroTimer(taskText, pomodoroCount);
+        // Устанавливаем временные интервалы в зависимости от типа задачи
+        switch (pomodoroType) {
+            case "учёба":
+                workDuration = 25;
+                breakDuration = 5;
+                longBreakDuration = 10;
+                break;
+            case "работа":
+                workDuration = 45;
+                breakDuration = 10;
+                longBreakDuration = 17;
+                break;
+            case "прочее":
+                workDuration = 30;
+                breakDuration = 8;
+                longBreakDuration = 14;
+                break;
+            case "нет":
+                // Для типа "нет" создаем одну длинную задачу без перерывов
+                createPomodoroTimer(taskText, totalMinutes, 0, 0, 1,
+                        switchSound.isChecked(), switchNotification.isChecked());
+                return;
+            default:
+                workDuration = 25;
+                breakDuration = 5;
+                longBreakDuration = 10;
+        }
+
+        pomodoroCount = Math.max(1, totalMinutes / workDuration);
+        createPomodoroTimer(taskText, workDuration, breakDuration, longBreakDuration,
+                pomodoroCount, switchSound.isChecked(), switchNotification.isChecked());
     }
 
     private int calculate_pomodoro_count(int totalMinutes, String pomodoroType) {
@@ -246,8 +279,10 @@ public class MainActivity extends AppCompatActivity {
         return (pomodoroType.equals("нет")) ? 0 : Math.max(1, totalMinutes / 25);
     }
 
-    private void createPomodoroTimer(String taskName, int pomodoroCount) {
-        LinearLayout container = findViewById(R.id.pomodoro_container); // Добавьте этот ID в activity_main.xml
+    private void createPomodoroTimer(String taskName, int workDuration, int breakDuration,
+                                     int longBreakDuration, int pomodoroCount,
+                                     boolean isSoundEnabled, boolean isNotificationEnabled) {
+        LinearLayout container = findViewById(R.id.pomodoro_container);
         if (container == null) return;
 
         PomodoroTaskView pomodoroView = new PomodoroTaskView(this);
@@ -256,8 +291,9 @@ public class MainActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams.WRAP_CONTENT
         ));
 
-        // Настройка таймера (25 мин работа, 5 мин отдых, 15 мин длинный перерыв)
-        pomodoroView.setup_task(taskName, 25, 5, 15, pomodoroCount);
+        pomodoroView.setSoundEnabled(isSoundEnabled);
+        pomodoroView.setNotificationEnabled(isNotificationEnabled);
+        pomodoroView.setup_task(taskName, workDuration, breakDuration, longBreakDuration, pomodoroCount);
         container.addView(pomodoroView);
 
         // ===========================================
