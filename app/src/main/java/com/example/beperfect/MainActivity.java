@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.Switch;
 
@@ -134,10 +135,21 @@ public class MainActivity extends AppCompatActivity {
         pomodoroChipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (!checkedIds.isEmpty()) {
                 Chip selectedChip = dialog.findViewById(checkedIds.get(0));
-                selectedChip.setTag(selectedChip.getText());
+                String selectedType = selectedChip.getText().toString();
+
+                // Динамически меняем подсказку в EditText
+                EditText etInput = dialog.findViewById(R.id.et_input);
+                switch (selectedType) {
+                    case "учёба":
+                        etInput.setHint("Тема занятия");
+                        break;
+                    case "работа":
+                        etInput.setHint("Проект/задача");
+                    default:
+                        etInput.setHint("Новая задача");
+                }
             }
         });
-        pomodoroChipGroup.check(R.id.pomidoro_chip4);
     }
 
 // ============================================================================================ //
@@ -221,17 +233,32 @@ public class MainActivity extends AppCompatActivity {
     // сейвим данные задачи
     private void save_to_data(String taskText, int hours, int minutes,
                               String repeatType, String pomodoroType) {
-        // Получаем состояния Switch
-        boolean soundState = switchSound != null && switchSound.isChecked();
-        boolean notificationState = switchNotification != null && switchNotification.isChecked();
+        // Конвертируем часы и минуты в минуты для Pomodoro
+        int totalMinutes = hours * 60 + minutes;
+        int pomodoroCount = calculate_pomodoro_count(totalMinutes, pomodoroType);
 
-        Log.d("SAVE_TASK", "Сохранение задачи:\n" +
-                "Текст: " + taskText + "\n" +
-                "Время: " + String.format("%02d:%02d", hours, minutes) + "\n" +
-                "Повтор: " + repeatType + "\n" +
-                "Pomodoro: " + pomodoroType + "\n" +
-                "Звук: " + (soundState ? "включен" : "выключен") + "\n" +
-                "Оповещения: " + (notificationState ? "включены" : "выключены"));
+        // Создаем таймер
+        createPomodoroTimer(taskText, pomodoroCount);
+    }
+
+    private int calculate_pomodoro_count(int totalMinutes, String pomodoroType) {
+        // Базовая логика: 1 Pomodoro = 25 мин работы + 5 мин отдыха
+        return (pomodoroType.equals("нет")) ? 0 : Math.max(1, totalMinutes / 25);
+    }
+
+    private void createPomodoroTimer(String taskName, int pomodoroCount) {
+        LinearLayout container = findViewById(R.id.pomodoro_container); // Добавьте этот ID в activity_main.xml
+        if (container == null) return;
+
+        PomodoroTaskView pomodoroView = new PomodoroTaskView(this);
+        pomodoroView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+
+        // Настройка таймера (25 мин работа, 5 мин отдых, 15 мин длинный перерыв)
+        pomodoroView.setup_task(taskName, 25, 5, 15, pomodoroCount);
+        container.addView(pomodoroView);
 
         // ===========================================
         // СОХРАНЕНИЕ В БД

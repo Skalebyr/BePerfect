@@ -3,4 +3,9 @@
     <string name="start_fraze">лучше иметь амбициозный план, чем никакгого</string>
     <string name="start_fraze_name">-У. Черчилль</string>
 
+    <string name="default_notification_channel_id">pomodoro_channel</string>
+
+    <string name="ready">Готово</string>
+    <string name="mega_sigma_text">таймер вышел</string>
+
 </resources>

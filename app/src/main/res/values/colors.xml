@@ -38,4 +38,11 @@
     <!-- Дополнительно -->
     <color name="divider_dark">#1E1E1E</color>       <!-- Разделители -->
     <color name="ripple_dark">#2E2E2E</color>        <!-- Эффект нажатия -->
+    <color name="control_icon_color">#212121</color>
+    <color name="icon_color">#424242</color>
+    <color name="green">#4CAF50</color>
+    <color name="black_light">#00000000</color>
+    <color name="black_grey">#33FFFFFF</color>
+    <color name="blue">#365FF4</color>
+
 </resources>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/timer_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="00:00:00"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:textSize="16sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="4dp">
+
+        <Button
+            android:id="@+id/control_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/control_button_bg"
+            android:gravity="center"
+            android:padding="12dp"
+            android:focusable="true"
+            android:clickable="true"/>
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/timer_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@id/control_button"
+            app:layout_constraintEnd_toStartOf="@id/control_button"
+            app:layout_constraintStart_toEndOf="@id/timer_text"
+            app:layout_constraintTop_toTopOf="@id/control_button"
+            app:trackThickness="8dp" />
+    </LinearLayout>
+</LinearLayout>
